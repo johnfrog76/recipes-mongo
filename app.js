@@ -4,13 +4,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const recipeRoutes = require('./routes/recipe-routes');
+const usersRoutes = require('./routes/users-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
 
 app.use(bodyParser.json());
 
-// CORS Headers => Required for cross-origin/ cross-server communication
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/users', usersRoutes);
 
 app.use((req, res, next) => {
     const error = new HttpError('Could not find this route.', 404);
