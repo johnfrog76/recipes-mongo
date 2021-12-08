@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const recipeSchema = new mongoose.Schema({
-    user_id: Number,
+    user_id: String,
     r_name: String,
     cat_id: Number,
     shared: Boolean,
