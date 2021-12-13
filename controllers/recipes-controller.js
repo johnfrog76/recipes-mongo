@@ -5,6 +5,7 @@ const Recipe = require('../models/recipe');
 const HttpError = require('../models/http-error');
 
 const createRecipe = async (req, res, next) => {
+
     const createdRecipe = new Recipe({
         user_id: req.body.user_id,
         r_name: req.body.r_name,
@@ -32,10 +33,31 @@ const createRecipe = async (req, res, next) => {
 };
 
 const deleteRecipe = async (req, res, next) => {
-    const recipeId = req.params.pid;
 
+    const recipeId = req.params.pid;
     let recipe;
+    let authUserId;
+
     try {
+        recipe = await Recipe.findById(recipeId);
+
+        if (req) {
+            authUserId = req.userData.userId;
+            if (recipe.user_id !== authUserId) {
+                throw new Error('Delete failed, id must match creator id.');
+            }
+        }
+
+    } catch (err) {
+        const error = new HttpError(
+            err.message,
+            500
+        );
+        return next(error);
+    }
+
+    try {
+
         recipe = await Recipe.findByIdAndRemove(recipeId);
     } catch (err) {
         const error = new HttpError(
@@ -95,12 +117,32 @@ const updateRecipe = async (req, res, next) => {
     const { r_name, cat_id, shared, rating, category, ingredients, steps, comments } = req.body;
     const recipeId = req.params.pid;
 
+
     let recipe;
+    let authUserId;
+
     try {
         recipe = await Recipe.findById(recipeId);
     } catch (err) {
         const error = new HttpError(
             'Something went wrong, could not update product.',
+            500
+        );
+        return next(error);
+    }
+
+
+    try {
+        if (req) {
+            authUserId = req.userData.userId;
+
+            if (recipe.user_id !== authUserId) {
+                throw new Error('Update failed, id must match creator id.');
+            }
+        }
+    } catch (err) {
+        const error = new HttpError(
+            err.message,
             500
         );
         return next(error);
