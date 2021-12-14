@@ -18,4 +18,6 @@ router.delete('/:pid', recipesController.deleteRecipe);
 
 router.patch('/:pid', recipesController.updateRecipe);
 
+router.patch('/comments/:pid', recipesController.updateRecipeComments);
+
 module.exports = router;

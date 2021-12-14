@@ -125,7 +125,7 @@ const updateRecipe = async (req, res, next) => {
         recipe = await Recipe.findById(recipeId);
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not update product.',
+            'Something went wrong, could not update recipe.',
             500
         );
         return next(error);
@@ -171,8 +171,40 @@ const updateRecipe = async (req, res, next) => {
     res.status(200).json({ recipe: recipe.toObject({ getters: true }) });
 };
 
+const updateRecipeComments = async (req, res, next) => {
+    const { comment, user } = req.body;
+    const recipeId = req.params.pid;
+
+    let recipe;
+    let userComment = { user, comment };
+
+    try {
+        recipe = await Recipe.findById(recipeId);
+        recipe.comments.push(userComment);
+    } catch (err) {
+        const error = new HttpError(
+            'Something went wrong, could not update recipe comments.',
+            500
+        );
+        return next(error);
+    }
+
+    try {
+        await recipe.save();
+    } catch (err) {
+        const error = new HttpError(
+            'Something went wrong, could not update recipe.',
+            500
+        );
+        return next(error);
+    }
+
+    res.status(200).json({ recipe: recipe.toObject({ getters: true }) });
+};
+
 exports.createRecipe = createRecipe;
 exports.getRecipes = getRecipes;
 exports.viewRecipe = viewRecipe;
 exports.deleteRecipe = deleteRecipe;
 exports.updateRecipe = updateRecipe;
+exports.updateRecipeComments = updateRecipeComments;
