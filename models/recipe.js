@@ -12,7 +12,8 @@ const recipeSchema = new mongoose.Schema({
     comments: [{
         comment: String,
         user: String
-    }]
+    }],
+    favorites: [String]
 });
 
 module.exports = mongoose.model('Recipe', recipeSchema);

@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 const Recipe = require('../models/recipe');
 const User = require('../models/user');
 const HttpError = require('../models/http-error');
-const { request } = require('http');
-
 
 const addFavorite = async (req, res, next) => {
     const { userId, recipeId } = req.body;
@@ -16,14 +14,13 @@ const addFavorite = async (req, res, next) => {
     try {
         recipe = await Recipe.findById(recipeId);
         user = await User.findById(userId);
-        let idx = user.favorites.findIndex(fav => fav.id === recipeId);
 
+        let idx = recipe.favorites.findIndex(r => r === userId);
         if (idx === -1) {
-            user.favorites.push({ _id: recipe._id, id: recipeId });
+            recipe.favorites.push(userId);
         } else {
             throw new Error('already exists');
         }
-
     } catch (err) {
         const error = new HttpError(
             `Something went wrong, could not add favorite: ${err.message}`,
@@ -33,8 +30,9 @@ const addFavorite = async (req, res, next) => {
     }
 
     try {
-        await user.save();
+        await recipe.save();
     } catch (err) {
+        console.log(err);
         const error = new HttpError(
             'Something went wrong, could not save add favorite',
             500
@@ -53,12 +51,13 @@ const removeFavorite = async (req, res, next) => {
     try {
         recipe = await Recipe.findById(recipeId);
         user = await User.findById(userId);
-        let idx = user.favorites.findIndex(fav => fav.id === recipeId);
+
+        let idx = recipe.favorites.findIndex(r => r === userId);
 
         if (idx === -1) {
             throw new Error('not found');
         } else {
-            user.favorites.splice(idx, 1);
+            recipe.favorites.splice(idx, 1);
         }
 
     } catch (err) {
@@ -70,7 +69,7 @@ const removeFavorite = async (req, res, next) => {
     }
 
     try {
-        await user.save();
+        await recipe.save();
     } catch (err) {
         const error = new HttpError(
             'Something went wrong, could not save remove favorite.',
