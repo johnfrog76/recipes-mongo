@@ -4,11 +4,12 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const Recipe = require('../models/recipe');
 
 const getUsers = async (req, res, next) => {
     let users;
     try {
-        users = await User.find({}, '-password');
+        users = await User.find({}, { password: 0, email: 0 });
     } catch (err) {
         const error = new HttpError(
             'Fetching users failed, please try again later.',
@@ -18,6 +19,34 @@ const getUsers = async (req, res, next) => {
     }
     res.json({ users: users.map(user => user.toObject({ getters: true })) });
 };
+
+const deleteUser = async (req, res, next) => {
+    const userToDelete = req.params.pid;
+    const loggedInUser = req.userData.userId;
+
+    try {
+        const foundUser = await User.findById(userToDelete);
+
+        if (userToDelete !== loggedInUser) {
+            throw new Error('user not match auth user');
+        } else if (foundUser === null) {
+            throw new Error('user not found');
+        } else {
+            await Recipe.deleteMany({ 'user_id': { $eq: userToDelete } });
+            await User.findByIdAndDelete(userToDelete);
+        }
+
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, could not remove user: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    const mssg = `remove user', ${userToDelete}`;
+    res.status(200).json({ message: mssg });
+}
 
 const signup = async (req, res, next) => {
     const errors = validationResult(req);
@@ -166,3 +195,4 @@ const login = async (req, res, next) => {
 exports.getUsers = getUsers;
 exports.signup = signup;
 exports.login = login;
+exports.deleteUser = deleteUser;

@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const usersController = require('../controllers/users-controller');
+const checkAuth = require('../middleware/check-auth');
 const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
@@ -24,5 +25,9 @@ router.post(
 );
 
 router.post('/login', usersController.login);
+
+router.use(checkAuth);
+
+router.delete('/remove/:pid', usersController.deleteUser);
 
 module.exports = router;
