@@ -1,21 +1,23 @@
 require('dotenv').config()
 
-const mongoose = require('mongoose');
 const Recipe = require('../models/recipe');
-const User = require('../models/user');
 const HttpError = require('../models/http-error');
 
 const addFavorite = async (req, res, next) => {
     const { userId, recipeId } = req.body;
+    const loggedInUser = req.userData.userId;
 
-    let user;
     let recipe;
 
     try {
         recipe = await Recipe.findById(recipeId);
-        user = await User.findById(userId);
+
+        if (loggedInUser !== userId) {
+            throw new Error('user not match auth user');
+        }
 
         let idx = recipe.favorites.findIndex(r => r === userId);
+
         if (idx === -1) {
             recipe.favorites.push(userId);
         } else {
@@ -45,12 +47,16 @@ const addFavorite = async (req, res, next) => {
 
 const removeFavorite = async (req, res, next) => {
     const { userId, recipeId } = req.body;
-    let user;
+    const loggedInUser = req.userData.userId;
+
     let recipe;
 
     try {
         recipe = await Recipe.findById(recipeId);
-        user = await User.findById(userId);
+
+        if (loggedInUser !== userId) {
+            throw new Error('user not match auth user');
+        }
 
         let idx = recipe.favorites.findIndex(r => r === userId);
 
