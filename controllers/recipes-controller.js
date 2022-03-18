@@ -172,11 +172,11 @@ const updateRecipe = async (req, res, next) => {
 };
 
 const updateRecipeComments = async (req, res, next) => {
-    const { comment, user } = req.body;
+    const { comment, user, userId } = req.body;
     const recipeId = req.params.pid;
 
     let recipe;
-    let userComment = { user, comment };
+    let userComment = { user, comment, userId };
 
     try {
         recipe = await Recipe.findById(recipeId);
