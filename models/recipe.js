@@ -11,7 +11,8 @@ const recipeSchema = new mongoose.Schema({
     steps: Array,
     comments: [{
         comment: String,
-        user: String
+        user: String,
+        userId: String
     }],
     favorites: [String]
 });
