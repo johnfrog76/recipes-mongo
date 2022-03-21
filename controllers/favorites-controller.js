@@ -42,7 +42,10 @@ const addFavorite = async (req, res, next) => {
         return next(error);
     }
 
-    res.status(200).json({ message: 'favorite added' });
+    res.status(200).json({
+        message: 'favorite added',
+        data: recipe
+    });
 }
 
 const removeFavorite = async (req, res, next) => {
