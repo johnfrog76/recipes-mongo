@@ -96,12 +96,28 @@ const viewRecipe = async (req, res, next) => {
     res.json({ recipe: recipe.toObject({ getters: true }) });
 };
 
+const getRecipesAuth = async (req, res, next) => {
+    const authUserId = req.userData.userId;
+    let recipes;
+
+    try {
+        recipes = await Recipe.find({ $or: [{ shared: true }, { user_id: authUserId }] }).exec();
+    } catch (err) {
+        const error = new HttpError(
+            'Could not find recipes',
+            500
+        );
+        return next(error);
+    }
+
+    res.json(recipes)
+}
+
 const getRecipes = async (req, res, next) => {
     let recipes;
 
     try {
-        // recipes = await Recipe.find({}, ['r_name', 'rating']).exec();
-        recipes = await Recipe.find().exec();
+        recipes = await Recipe.find({ shared: true }).exec();
     } catch (err) {
         const error = new HttpError(
             'Could not find recipes',
@@ -204,6 +220,7 @@ const updateRecipeComments = async (req, res, next) => {
 
 exports.createRecipe = createRecipe;
 exports.getRecipes = getRecipes;
+exports.getRecipesAuth = getRecipesAuth;
 exports.viewRecipe = viewRecipe;
 exports.deleteRecipe = deleteRecipe;
 exports.updateRecipe = updateRecipe;

@@ -5,12 +5,13 @@ const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
+router.get('/unauth/', recipesController.getRecipes);
 
-router.get('/', recipesController.getRecipes);
-
-router.get('/:pid', recipesController.viewRecipe);
+router.get('/unauth/:pid', recipesController.viewRecipe);
 
 router.use(checkAuth);
+
+router.get('/auth/', recipesController.getRecipesAuth)
 
 router.post('/', recipesController.createRecipe);
 
