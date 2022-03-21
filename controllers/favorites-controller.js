@@ -16,10 +16,10 @@ const addFavorite = async (req, res, next) => {
             throw new Error('user not match auth user');
         }
 
-        let idx = recipe.favorites.findIndex(r => r === userId);
+        let idx = recipe.favorites.findIndex(r => r.userId === userId);
 
         if (idx === -1) {
-            recipe.favorites.push(userId);
+            recipe.favorites.push({ userId: userId });
         } else {
             throw new Error('already exists');
         }
@@ -42,7 +42,10 @@ const addFavorite = async (req, res, next) => {
         return next(error);
     }
 
-    res.status(200).json({ message: 'favorite added' });
+    res.status(200).json({
+        message: 'favorite added',
+        data: recipe
+    });
 }
 
 const removeFavorite = async (req, res, next) => {
@@ -58,7 +61,7 @@ const removeFavorite = async (req, res, next) => {
             throw new Error('user not match auth user');
         }
 
-        let idx = recipe.favorites.findIndex(r => r === userId);
+        let idx = recipe.favorites.findIndex(r => r.userId === userId);
 
         if (idx === -1) {
             throw new Error('not found');

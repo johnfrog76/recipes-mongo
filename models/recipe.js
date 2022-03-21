@@ -4,7 +4,11 @@ const commentSchema = new mongoose.Schema({
     comment: String,
     user: String,
     userId: String
-}, { timestamps: true })
+}, { timestamps: true });
+
+const favoriteSchema = new mongoose.Schema({
+    userId: String
+}, { timestamps: true });
 
 const recipeSchema = new mongoose.Schema({
     user_id: String,
@@ -16,7 +20,7 @@ const recipeSchema = new mongoose.Schema({
     ingredients: Array,
     steps: Array,
     comments: [commentSchema],
-    favorites: [String]
+    favorites: [favoriteSchema]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Recipe', recipeSchema);

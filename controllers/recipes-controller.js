@@ -29,7 +29,7 @@ const createRecipe = async (req, res, next) => {
         );
         return next(error);
     }
-    res.json(result);
+    res.status(201).json(result);
 };
 
 const deleteRecipe = async (req, res, next) => {
