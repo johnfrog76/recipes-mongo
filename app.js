@@ -12,7 +12,6 @@ const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const app = express();
-const port = process.env.PORT || 5000;
 
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
@@ -37,11 +36,14 @@ const swaggerOptions = {
     apis: ['./routes/*.js'],
 };
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use(
-    '/api-docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerDocs));
+if (process.env.NODE_ENV === 'development') {
+    const swaggerDocs = swaggerJsDoc(swaggerOptions);
+    app.use(
+        '/api-docs',
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerDocs)
+    );
+}
 
 
 app.use(bodyParser.json());
