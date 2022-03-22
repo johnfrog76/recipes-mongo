@@ -7,6 +7,16 @@ const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
 
+/** 
+ * @swagger 
+ * /api/users/:
+ *   get: 
+ *     description: get list of users
+ *     responses:  
+ *       200: 
+ *         description: Success  
+ *   
+ */
 router.get('/', usersController.getUsers);
 
 router.post(
