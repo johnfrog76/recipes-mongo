@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { NODE_ENV } = process.env;
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -7,10 +8,10 @@ const recipeRoutes = require('./routes/recipe-routes');
 const usersRoutes = require('./routes/users-routes');
 const favoriteRoutes = require('./routes/favorites-routes');
 const HttpError = require('./models/http-error');
+
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
-const { NODE_ENV } = process.env;
 const app = express();
 
 if (NODE_ENV === 'development') {
