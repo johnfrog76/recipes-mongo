@@ -8,8 +8,10 @@ const usersRoutes = require('./routes/users-routes');
 const favoriteRoutes = require('./routes/favorites-routes');
 const HttpError = require('./models/http-error');
 
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+if (process.env.NODE_ENV === 'development') {
+    const swaggerJsDoc = require('swagger-jsdoc');
+    const swaggerUi = require('swagger-ui-express');
+}
 
 const app = express();
 
