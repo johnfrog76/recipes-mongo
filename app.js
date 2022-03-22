@@ -8,7 +8,41 @@ const usersRoutes = require('./routes/users-routes');
 const favoriteRoutes = require('./routes/favorites-routes');
 const HttpError = require('./models/http-error');
 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 const app = express();
+const port = process.env.PORT || 5000;
+
+// Extended: https://swagger.io/specification/#infoObject
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: 'Recipe API',
+            description: 'Recipe API Information',
+            contact: {
+                name: 'jwebster'
+            },
+            servers: [process.env.SERVER_URL]
+        },
+        securityDefinitions: {
+            bearerAuth: {
+                type: 'apiKey',
+                name: 'Authorization',
+                scheme: 'bearer',
+                in: 'header'
+            }
+        }
+    },
+    apis: ['./routes/*.js'],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocs));
+
 
 app.use(bodyParser.json());
 
