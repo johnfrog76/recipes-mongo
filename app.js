@@ -13,30 +13,30 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
-// Extended: https://swagger.io/specification/#infoObject
-const swaggerOptions = {
-    swaggerDefinition: {
-        info: {
-            title: 'Recipe API',
-            description: 'Recipe API Information',
-            contact: {
-                name: 'jwebster'
-            },
-            servers: [process.env.SERVER_URL]
-        },
-        securityDefinitions: {
-            bearerAuth: {
-                type: 'apiKey',
-                name: 'Authorization',
-                scheme: 'bearer',
-                in: 'header'
-            }
-        }
-    },
-    apis: ['./routes/*.js'],
-};
-
 if (process.env.NODE_ENV === 'development') {
+    // Extended: https://swagger.io/specification/#infoObject
+    const swaggerOptions = {
+        swaggerDefinition: {
+            info: {
+                title: 'Recipe API',
+                description: 'Recipe API Information',
+                contact: {
+                    name: 'jwebster'
+                },
+                servers: [process.env.SERVER_URL]
+            },
+            securityDefinitions: {
+                bearerAuth: {
+                    type: 'apiKey',
+                    name: 'Authorization',
+                    scheme: 'bearer',
+                    in: 'header'
+                }
+            }
+        },
+        apis: ['./routes/*.js'],
+    };
+
     const swaggerDocs = swaggerJsDoc(swaggerOptions);
     app.use(
         '/api-docs',
