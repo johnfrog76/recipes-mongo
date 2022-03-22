@@ -7,15 +7,13 @@ const recipeRoutes = require('./routes/recipe-routes');
 const usersRoutes = require('./routes/users-routes');
 const favoriteRoutes = require('./routes/favorites-routes');
 const HttpError = require('./models/http-error');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
-if (process.env.NODE_ENV === 'development') {
-    const swaggerJsDoc = require('swagger-jsdoc');
-    const swaggerUi = require('swagger-ui-express');
-}
-
+const { NODE_ENV } = process.env;
 const app = express();
 
-if (process.env.NODE_ENV === 'development') {
+if (NODE_ENV === 'development') {
     // Extended: https://swagger.io/specification/#infoObject
     const swaggerOptions = {
         swaggerDefinition: {
