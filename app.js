@@ -30,6 +30,7 @@ if (NODE_ENV === 'development') {
                 bearerAuth: {
                     type: 'apiKey',
                     name: 'Authorization',
+                    description: 'Remember: enter Bearer with one space before token in Value field below',
                     scheme: 'bearer',
                     in: 'header'
                 }

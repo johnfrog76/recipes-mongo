@@ -19,6 +19,33 @@ const router = express.Router();
  */
 router.get('/', usersController.getUsers);
 
+/** 
+ * @swagger 
+ * /api/users/signup:
+ *   post:
+ *     name: User signup
+ *     description: user signup
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *             email:
+ *               type: string
+ *             password:
+ *               type: string
+ *             name:
+ *               type: string
+ *     responses:
+ *       201: 
+ *         description: Created
+ *       422: 
+ *         description: Unprocessable Entity
+ *       500:
+ *         description: Error
+ *
+ */
 router.post(
     '/signup',
     //fileUpload.single('image'),
@@ -34,10 +61,59 @@ router.post(
     usersController.signup
 );
 
+/** 
+ * @swagger 
+ * /api/users/login:
+ *   post:
+ *      name: User login
+ *      description: user login
+ *      parameters:
+ *        - name: body
+ *          in: body
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *              password:
+ *                type: string
+ *      responses:
+ *        200: 
+ *          description: Success
+ *        401: 
+ *          description: Unauthorized
+ *        500:
+ *          description: Error
+ *
+ */
 router.post('/login', usersController.login);
 
 router.use(checkAuth);
 
+/** 
+ * @swagger 
+ * /api/users/remove/{userId}:
+ *   delete:
+ *     name: Delete a User
+ *     description: delete a user account and all data associate with account
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         type: string
+ *         minimum: 2
+ *         description: the user ID
+ *     responses:
+ *       200:
+ *         description: Success
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Error
+ *
+ */
 router.delete('/remove/:pid', usersController.deleteUser);
 
 module.exports = router;
