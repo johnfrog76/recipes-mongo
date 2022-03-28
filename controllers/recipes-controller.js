@@ -93,7 +93,15 @@ const viewRecipe = async (req, res, next) => {
         return next(error);
     }
 
-    res.json({ recipe: recipe.toObject({ getters: true }) });
+    if (recipe.shared === false) {
+        const error = new HttpError(
+            'No permission to view this recipe',
+            401
+        )
+        return next(error);
+    }
+
+    res.status(200).json({ recipe: recipe.toObject({ getters: true }) });
 };
 
 const getRecipesAuth = async (req, res, next) => {
