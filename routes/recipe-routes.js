@@ -247,4 +247,64 @@ router.patch('/:pid', recipesController.updateRecipe);
 
 router.patch('/comments/:pid', recipesController.updateRecipeComments);
 
+/** 
+ * @swagger 
+ * /api/recipes/share/bulk-add:
+ *   patch:
+ *      name: Share a list of recipes
+ *      description: share a list of recipes
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - name: body
+ *          in: body
+ *          schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              recipesList:
+ *                type: array
+ *                items:
+ *                  type: string
+ *      responses:
+ *        200: 
+ *          description: Success
+ *        401: 
+ *          description: Unauthorized
+ *        500:
+ *          description: Error
+ */
+router.patch('/share/bulk-add', recipesController.shareRecipeBulkAdd);
+
+/** 
+ * @swagger 
+ * /api/recipes/share/bulk-remove:
+ *   patch:
+ *      name: Remove sharing from list of recipes
+ *      description: remove sharing from list of recipes
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - name: body
+ *          in: body
+ *          schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              recipesList:
+ *                type: array
+ *                items:
+ *                  type: string
+ *      responses:
+ *        200: 
+ *          description: Success
+ *        401: 
+ *          description: Unauthorized
+ *        500:
+ *          description: Error
+ */
+router.patch('/share/bulk-remove', recipesController.shareRecipeBulkRemove);
+
 module.exports = router;
