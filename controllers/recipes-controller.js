@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 const Recipe = require('../models/recipe');
 const HttpError = require('../models/http-error');
@@ -226,6 +226,160 @@ const updateRecipeComments = async (req, res, next) => {
     res.status(200).json({ recipe: recipe.toObject({ getters: true }) });
 };
 
+const shareRecipeBulkAdd = async (req, res, next) => {
+    let foundRecipes;
+    let objIdRecipeList;
+    const { userId, recipesList } = req.body;
+    const loggedInUser = req.userData.userId;
+
+    try {
+        if (loggedInUser !== userId) {
+            throw new Error('user not match auth user');
+        }
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, could not find user in bulk add share: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    try {
+        objIdRecipeList = recipesList.map(r => {
+            const _id = ObjectId(r);
+            return _id;
+        });
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, incorrect list of recipes in bulk add share: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    try {
+        foundRecipes = await Recipe.find({ _id: { $in: objIdRecipeList } });
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, could not retrieve recipes in bulk add share: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    const savedItems = async () => {
+        return await Promise.all(foundRecipes.map(async (r) => {
+            try {
+                let isOwner = r.user_id === userId;
+
+                if (!isOwner) {
+                    await Promise.reject('not the owner');
+                } else {
+                    if (r.shared === true) {
+                        await Promise.reject('already shared');
+                    } else {
+                        r.shared = true;
+                    }
+                }
+
+                const updated = await r.save();
+                return updated;
+            } catch (err) {
+
+                if (typeof err === 'string') {
+                    return { error: true, message: err }
+                }
+                return { error: true, message: 'unknown error' }
+            }
+        }));
+    }
+
+    savedItems().then((updatedList) => {
+        res.status(200).json({
+            message: 'recipes are shared',
+            data: updatedList.filter(r => r.error === undefined),
+            errors: updatedList.filter(r => r.error === true)
+        });
+    });
+};
+
+const shareRecipeBulkRemove = async (req, res, next) => {
+    let foundRecipes;
+    let objIdRecipeList;
+    const { userId, recipesList } = req.body;
+    const loggedInUser = req.userData.userId;
+
+    try {
+        if (loggedInUser !== userId) {
+            throw new Error('user not match auth user');
+        }
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, could not find user in bulk remove share: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    try {
+        objIdRecipeList = recipesList.map(r => {
+            const _id = ObjectId(r);
+            return _id;
+        });
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, incorrect list of recipes in bulk remove share: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    try {
+        foundRecipes = await Recipe.find({ _id: { $in: objIdRecipeList } });
+    } catch (err) {
+        const error = new HttpError(
+            `Something went wrong, could not retrieve recipes in bulk remove share: ${err.message}`,
+            500
+        );
+        return next(error);
+    }
+
+    const savedItems = async () => {
+        return await Promise.all(foundRecipes.map(async (r) => {
+            try {
+                let isOwner = r.user_id === userId;
+
+                if (!isOwner) {
+                    await Promise.reject('not the owner');
+                } else {
+                    if (r.shared === false) {
+                        await Promise.reject('already not shared');
+                    } else {
+                        r.shared = false;
+                    }
+                }
+
+                const updated = await r.save();
+                return updated;
+            } catch (err) {
+
+                if (typeof err === 'string') {
+                    return { error: true, message: err }
+                }
+                return { error: true, message: 'unknown error' }
+            }
+        }));
+    }
+
+    savedItems().then((updatedList) => {
+        res.status(200).json({
+            message: 'recipes are no longer shared',
+            data: updatedList.filter(r => r.error === undefined),
+            errors: updatedList.filter(r => r.error === true)
+        });
+    });
+};
+
 exports.createRecipe = createRecipe;
 exports.getRecipes = getRecipes;
 exports.getRecipesAuth = getRecipesAuth;
@@ -233,3 +387,5 @@ exports.viewRecipe = viewRecipe;
 exports.deleteRecipe = deleteRecipe;
 exports.updateRecipe = updateRecipe;
 exports.updateRecipeComments = updateRecipeComments;
+exports.shareRecipeBulkAdd = shareRecipeBulkAdd;
+exports.shareRecipeBulkRemove = shareRecipeBulkRemove;

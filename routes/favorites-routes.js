@@ -64,5 +64,65 @@ router.post('/add', favoritesController.addFavorite);
  */
 router.post('/remove', favoritesController.removeFavorite);
 
+/** 
+ * @swagger 
+ * /api/favorites/bulk-add:
+ *   post:
+ *      name: Add favorites to list of recipes
+ *      description: favorite a list of recipes
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - name: body
+ *          in: body
+ *          schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              recipesList:
+ *                type: array
+ *                items:
+ *                  type: string
+ *      responses:
+ *        200: 
+ *          description: Success
+ *        401: 
+ *          description: Unauthorized
+ *        500:
+ *          description: Error
+ */
+router.post('/bulk-add', favoritesController.addFavoriteBulk);
+
+/** 
+ * @swagger 
+ * /api/favorites/bulk-remove:
+ *   post:
+ *      name: Remove favorites to list of recipes
+ *      description: remove favorites from list of recipes
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - name: body
+ *          in: body
+ *          schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              recipesList:
+ *                type: array
+ *                items:
+ *                  type: string
+ *      responses:
+ *        200: 
+ *          description: Success
+ *        401: 
+ *          description: Unauthorized
+ *        500:
+ *          description: Error
+ */
+router.post('/bulk-remove', favoritesController.removeFavoriteBulk);
+
 
 module.exports = router;
