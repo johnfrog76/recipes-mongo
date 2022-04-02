@@ -267,7 +267,6 @@ const shareRecipeBulkAdd = async (req, res, next) => {
         return next(error);
     }
 
-
     const savedItems = async () => {
         return await Promise.all(foundRecipes.map(async (r) => {
             try {
@@ -344,7 +343,6 @@ const shareRecipeBulkRemove = async (req, res, next) => {
         );
         return next(error);
     }
-
 
     const savedItems = async () => {
         return await Promise.all(foundRecipes.map(async (r) => {

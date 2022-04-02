@@ -131,7 +131,6 @@ const addFavoriteBulk = async (req, res, next) => {
         return next(error);
     }
 
-
     const savedItems = async () => {
         return await Promise.all(foundRecipes.map(async (r) => {
             try {
@@ -204,7 +203,6 @@ const removeFavoriteBulk = async (req, res, next) => {
         );
         return next(error);
     }
-
 
     const savedItems = async () => {
         return await Promise.all(foundRecipes.map(async (r) => {
