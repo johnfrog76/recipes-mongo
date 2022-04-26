@@ -51,7 +51,6 @@ const addFavorite = async (req, res, next) => {
 const removeFavorite = async (req, res, next) => {
     const { userId, recipeId } = req.body;
     const loggedInUser = req.userData.userId;
-
     let recipe;
 
     try {
