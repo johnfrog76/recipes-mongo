@@ -87,7 +87,10 @@ const removeFavorite = async (req, res, next) => {
         return next(error);
     }
 
-    res.status(200).json({ message: 'favorite removed' });
+    res.status(200).json({
+        message: 'favorite removed',
+        data: recipe
+    });
 };
 
 const addFavoriteBulk = async (req, res, next) => {
