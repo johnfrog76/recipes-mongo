@@ -8,8 +8,6 @@ const HttpError = require('../models/http-error');
 
 const copyOneRecipe = async (req, res, next) => {
     const { recipeId, userId } = req.body;
-    // const authUserId = req.userData.userId;
-
     let recipe;
     let user;
     let copyComment;
@@ -31,7 +29,22 @@ const copyOneRecipe = async (req, res, next) => {
         user = await User.findById(userId)
     } catch (err) {
         const error = new HttpError(
-            'failed to find user to own copy',
+            'failed to find user to own recipe copy',
+            500
+        );
+
+        return next(error);
+    }
+
+    try {
+        const authUserId = req.userData.userId;
+        if (authUserId !== userId) {
+            throw new Error('to copy recipe user must be logged in');
+        }
+
+    } catch (err) {
+        const error = new HttpError(
+            err.message,
             500
         );
 
