@@ -2,7 +2,105 @@ require('dotenv').config()
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 const Recipe = require('../models/recipe');
+const User = require('../models/user');
 const HttpError = require('../models/http-error');
+
+
+const copyOneRecipe = async (req, res, next) => {
+    const { recipeId, userId } = req.body;
+    let recipe;
+    let user;
+    let copyComment;
+    let createdRecipe;
+    let result;
+
+    try {
+        recipe = await Recipe.findById(recipeId);
+    } catch (err) {
+        const error = new HttpError(
+            'failed to find recipe to copy',
+            500
+        );
+
+        return next(error);
+    }
+
+    try {
+        user = await User.findById(userId)
+    } catch (err) {
+        const error = new HttpError(
+            'failed to find user to own recipe copy',
+            500
+        );
+
+        return next(error);
+    }
+
+    try {
+        const authUserId = req.userData.userId;
+        if (authUserId !== userId) {
+            throw new Error('to copy recipe user must be logged in');
+        }
+
+    } catch (err) {
+        const error = new HttpError(
+            err.message,
+            500
+        );
+
+        return next(error);
+    }
+
+    try {
+        copyComment = {
+            comment: `recipe copied from ${recipe._id} by ${user.name}`,
+            id: user._id,
+            user: user.name
+        }
+
+        createdRecipe = new Recipe({
+            user_id: user._id,
+            r_name: recipe.r_name + ' (copy)',
+            cat_id: recipe.cat_id,
+            shared: false,
+            rating: recipe.rating,
+            category: recipe.category,
+            steps: recipe.steps,
+            ingredients: recipe.ingredients,
+            comments: []
+        });
+
+        createdRecipe.comments.push(copyComment);
+
+    } catch (err) {
+        const error = new HttpError(
+            'failed to create new recipe',
+            500
+        );
+
+        return next(error);
+    }
+
+
+    try {
+        // saving the recipe
+        result = await createdRecipe.save();
+    } catch (err) {
+
+        const error = new HttpError(
+            'failed to save new recipe',
+            500
+        );
+
+        return next(error);
+    }
+
+    res.status(201).json({
+        data: result,
+        message: 'recipe copy created'
+    });
+};
+
 
 const createRecipe = async (req, res, next) => {
 
@@ -389,3 +487,4 @@ exports.updateRecipe = updateRecipe;
 exports.updateRecipeComments = updateRecipeComments;
 exports.shareRecipeBulkAdd = shareRecipeBulkAdd;
 exports.shareRecipeBulkRemove = shareRecipeBulkRemove;
+exports.copyOneRecipe = copyOneRecipe;

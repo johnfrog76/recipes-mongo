@@ -45,6 +45,33 @@ router.use(checkAuth);
 
 /** 
  * @swagger 
+ * /api/recipes/copy-one/:
+ *   post:
+ *      name: Copy One Recipes
+ *      description: copy a new recipe
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - name: body
+ *          in: body
+ *          schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              recipeId:
+ *                type: string
+ *      responses:
+ *        201: 
+ *          description: Created
+ *        401: 
+ *          description: Unauthorized
+ *
+ */
+router.post('/copy-one/', recipesController.copyOneRecipe);
+
+/** 
+ * @swagger 
  * /api/recipes/auth:
  *   get:
  *      name: Auth Recipes
