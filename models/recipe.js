@@ -13,7 +13,7 @@ const favoriteSchema = new mongoose.Schema({
 const recipeSchema = new mongoose.Schema({
     user_id: String,
     r_name: String,
-    cat_id: Number,
+    cat_id: String,
     shared: Boolean,
     rating: Number,
     category: String,
