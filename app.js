@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const recipeRoutes = require('./routes/recipe-routes');
+const categoryRoutes = require('./routes/category-routes');
 const usersRoutes = require('./routes/users-routes');
 const favoriteRoutes = require('./routes/favorites-routes');
 const HttpError = require('./models/http-error');
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/categories', categoryRoutes);
 
 app.use((req, res, next) => {
     const error = new HttpError('Could not find this route.', 404);
