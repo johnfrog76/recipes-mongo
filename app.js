@@ -3,6 +3,7 @@ const { NODE_ENV } = process.env;
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);
 
 const recipeRoutes = require('./routes/recipe-routes');
 const categoryRoutes = require('./routes/category-routes');
@@ -82,12 +83,13 @@ app.use((error, req, res, next) => {
     res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.dnlkt.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority`;
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.dnlkt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
-mongoose.connect(url, { useNewUrlParser: true })
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        app.listen(process.env.PORT || 5000);
-        console.log('database connected!')
+        const port = process.env.PORT || 3001;
+        app.listen(port);
+        console.log(`database connected on port :${port}.`)
     })
     .catch(err => {
         console.log(err);
