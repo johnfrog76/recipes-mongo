@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  recipe-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: recipe-api-dev
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    env_file:
+      - .env
+    volumes:
+      # Mount source code for hot reload (optional - remove if you prefer container-only development)
+      - .:/usr/src/app
+      - /usr/src/app/node_modules  # Anonymous volume to prevent overwriting node_modules
+    restart: unless-stopped
+    networks:
+      - recipe-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/categories"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  recipe-network:
+    driver: bridge
+
+# Optional: Add a MongoDB container for local development (comment out if using Atlas)
+# services:
+#   mongo-dev:
+#     image: mongo:7
+#     container_name: mongo-dev
+#     ports:
+#       - "27017:27017"
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: admin
+#       MONGO_INITDB_ROOT_PASSWORD: password
+#       MONGO_INITDB_DATABASE: recipes
+#     volumes:
+#       - mongo-dev-data:/data/db
+#     networks:
+#       - recipe-network
+#
+# volumes:
+#   mongo-dev-data:
